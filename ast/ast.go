@@ -10,17 +10,17 @@ type Node interface {
 	String() string
 }
 
-type Statement interface {
+type Statement interface { // Implement Node
 	Node
 	statementNode()
 }
 
-type Expression interface {
+type Expression interface { // Implement Node
 	Node
 	expressionNode()
 }
 
-type Program struct {
+type Program struct { // Extend Node
 	Statements []Statement
 }
 
@@ -31,7 +31,7 @@ func (p *Program) TokenLiteral() string {
 	return ""
 }
 
-type LetStatement struct {
+type LetStatement struct { // Extend Statement
 	Token token.Token
 	Name  *Identifier
 	Value Expression
@@ -57,7 +57,7 @@ func (ls *LetStatement) String() string {
 
 }
 
-type Identifier struct {
+type Identifier struct { // Extend Expression
 	Token token.Token
 	Value string
 }
@@ -71,7 +71,7 @@ func (i *Identifier) String() string {
 	return i.Value
 }
 
-type ReturnStatement struct {
+type ReturnStatement struct { // Extend Statement
 	Token       token.Token
 	ReturnValue Expression
 }
@@ -116,5 +116,37 @@ func (p *Program) String() string {
 	for _, s := range p.Statements {
 		out.WriteString(s.String())
 	}
+	return out.String()
+}
+
+type IntegerLiteral struct { // Extend Expression
+	Token token.Token
+	Value int64
+}
+
+func (il *IntegerLiteral) expressionNode() {}
+func (il *IntegerLiteral) TokenLiteral() string {
+	return il.Token.Literal
+}
+func (il *IntegerLiteral) String() string {
+	return il.Token.Literal
+}
+
+type PrefixExpression struct { // Extend Expression
+	Token         token.Token // The prefix token, e.g. !
+	Operator string
+	Right         Expression
+}
+
+func (pe *PrefixExpression) expressionNode() {}
+func (pe *PrefixExpression) TokenLiteral() string {
+	return pe.Token.Literal
+}
+func (pe *PrefixExpression) String() string {
+	var out bytes.Buffer
+	out.WriteString("(")
+	out.WriteString(pe.Operator)
+	out.WriteString(pe.Right.String())
+	out.WriteString(")")
 	return out.String()
 }
