@@ -10,7 +10,7 @@ type Token struct {
 const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
-	// Identifiers + literals
+
 	IDENT = "IDENT" // add, foobar, x, y, ...
 	INT   = "INT"   // 1343456
 
@@ -18,8 +18,19 @@ const (
 	ASSIGN   = "="
 	PLUS     = "+"
 	MINUS    = "-"
-	DIVIDE   = "/"
-	MULTIPLE = "*"
+	SLASH    = "/"
+	ASTERISK = "*"
+	MODULO   = "%"
+
+	// Comparator
+	EQ     = "=="
+	NOT_EQ = "!="
+	LT     = "<"
+	GT     = ">"
+	LTE    = "<="
+	GTE    = ">="
+	BANG   = "!"
+
 	// Delimiters
 	COMMA     = ","
 	SEMICOLON = ";"
@@ -27,14 +38,31 @@ const (
 	RPAREN    = ")"
 	LBRACE    = "{"
 	RBRACE    = "}"
+
 	// Keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
+	TRUE     = "TRUE"
+	FALSE    = "FALSE"
+	IF       = "IF"
+	ELSE     = "ELSE"
+	FOR      = "FOR"
+	WHILE    = "WHILE"
+	NEW      = "NEW"
+	RETURN   = "RETURN"
 )
 
 var keywords = map[string]Type{
-	"fn":  FUNCTION,
-	"let": LET,
+	"fn":     FUNCTION,
+	"let":    LET,
+	"true":   TRUE,
+	"false":  FALSE,
+	"if":     IF,
+	"else":   ELSE,
+	"for":    FOR,
+	"while":  WHILE,
+	"new":    NEW,
+	"return": RETURN,
 }
 
 // LookUpIdent get type of the identifier is (keyword or variable name)
@@ -49,4 +77,3 @@ func LookUpIdent(ident string) Type {
 func New(tokenType Type, ch byte) Token {
 	return Token{Type: tokenType, Literal: string(ch)}
 }
-

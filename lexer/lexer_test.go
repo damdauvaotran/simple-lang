@@ -14,7 +14,7 @@ func TestNextToken(t *testing.T) {
 		{token.ASSIGN, "="},
 		{token.PLUS, "+"},
 		{token.MINUS, "-"},
-		{token.DIVIDE, "/"},
+		{token.SLASH, "/"},
 		{token.LPAREN, "("},
 		{token.RPAREN, ")"},
 		{token.LBRACE, "{"},

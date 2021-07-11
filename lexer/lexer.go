@@ -2,7 +2,6 @@ package lexer
 
 import (
 	"amonkey/token"
-	"fmt"
 )
 
 type Lexer struct {
@@ -18,25 +17,6 @@ func New(input string) *Lexer {
 	return l
 }
 
-// readChar read the next character in input
-func (l *Lexer) readChar() {
-	if l.readPosition >= len(l.input) {
-		l.ch = 0
-	} else {
-		l.ch = l.input[l.readPosition]
-	}
-	l.position = l.readPosition
-	l.readPosition += 1
-}
-
-func (l *Lexer) peekChar() byte {
-	if l.readPosition >= len(l.input) {
-		return 0
-	} else {
-		return l.input[l.readPosition]
-	}
-}
-
 // NextToken read the next token in input, skip the whitespace
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
@@ -44,58 +24,80 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.ch {
 	case '=':
-		fmt.Printf("scanned %v \n", string(l.ch))
-		tok = token.New(token.ASSIGN, l.ch)
-	case ';':
-		fmt.Printf("scanned %v \n", string(l.ch))
-		tok = token.New(token.SEMICOLON, l.ch)
-	case '(':
-		fmt.Printf("scanned %v \n", string(l.ch))
-		tok = token.New(token.LPAREN, l.ch)
-	case ')':
-		fmt.Printf("scanned %v \n", string(l.ch))
-		tok = token.New(token.RPAREN, l.ch)
-	case ',':
-		fmt.Printf("scanned %v \n", string(l.ch))
-		tok = token.New(token.COMMA, l.ch)
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = token.Token{Type: token.EQ, Literal: string(ch) + string(l.ch)}
+		} else {
+			tok = token.New(token.ASSIGN, l.ch)
+		}
+		// Operator
 	case '+':
-		fmt.Printf("scanned %v \n", string(l.ch))
 		tok = token.New(token.PLUS, l.ch)
 	case '-':
-		fmt.Printf("scanned %v \n", string(l.ch))
 		tok = token.New(token.MINUS, l.ch)
 	case '*':
-		fmt.Printf("scanned %v \n", string(l.ch))
-		tok = token.New(token.MULTIPLE, l.ch)
+		tok = token.New(token.ASTERISK, l.ch)
 	case '/':
-		fmt.Printf("scanned %v \n", string(l.ch))
-		tok = token.New(token.DIVIDE, l.ch)
+		tok = token.New(token.SLASH, l.ch)
+	case '%':
+		tok = token.New(token.MODULO, l.ch)
+		// Comparator
+	case '!':
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = token.Token{Type: token.NOT_EQ, Literal: string(ch) + string(l.ch)}
+		} else {
+			tok = token.New(token.BANG, l.ch)
+		}
+	case '>':
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = token.Token{Type: token.GTE, Literal: string(ch) + string(l.ch)}
+		} else {
+			tok = token.New(token.GT, l.ch)
+		}
+	case '<':
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			tok = token.Token{Type: token.LTE, Literal: string(ch) + string(l.ch)}
+		} else {
+			tok = token.New(token.LT, l.ch)
+		}
+		// Structure token
+	case ';':
+		tok = token.New(token.SEMICOLON, l.ch)
+	case ',':
+		tok = token.New(token.COMMA, l.ch)
+	case '(':
+		tok = token.New(token.LPAREN, l.ch)
+	case ')':
+		tok = token.New(token.RPAREN, l.ch)
 	case '}':
-		fmt.Printf("scanned %v \n", string(l.ch))
 		tok = token.New(token.RBRACE, l.ch)
 	case '{':
-		fmt.Printf("scanned %v \n", string(l.ch))
 		tok = token.New(token.LBRACE, l.ch)
 	case 0:
-		fmt.Printf("scanned %v \n", "EOF")
 		tok.Literal = ""
 		tok.Type = token.EOF
-	default:
+		// Distinguish between identifier and keyword
+	default: // must return because we dont want double readChar() called
 		if isLetter(l.ch) {
-			var ident = l.readIdentifier()
+			ident := l.readIdentifier()
 			tok.Literal = ident
 			tok.Type = token.LookUpIdent(tok.Literal)
-			fmt.Printf("scanned %v \n", ident)
 			return tok
 		} else if isDigit(l.ch) {
 			number := l.readNumber()
 			tok.Literal = number
 			tok.Type = token.INT
-			fmt.Printf("scanned %v \n", number)
+			return tok
 		} else {
 			tok = token.New(token.ILLEGAL, l.ch)
 		}
-
 	}
 
 	l.readChar()
@@ -115,13 +117,32 @@ func (l *Lexer) readNumber() string {
 	for isDigit(l.ch) {
 		l.readChar()
 	}
-	fmt.Println( l.input[position:l.position])
 	return l.input[position:l.position]
 }
 
 func (l *Lexer) skipWhitespace() {
 	for l.ch == ' ' || l.ch == '\n' {
 		l.readChar()
+	}
+}
+
+// readChar read the next character in input
+func (l *Lexer) readChar() {
+	if l.readPosition >= len(l.input) {
+		l.ch = 0
+	} else {
+		l.ch = l.input[l.readPosition]
+	}
+	l.position = l.readPosition
+	l.readPosition += 1
+}
+
+// peekChar see the next character
+func (l *Lexer) peekChar() byte {
+	if l.readPosition >= len(l.input) {
+		return 0
+	} else {
+		return l.input[l.readPosition]
 	}
 }
 
