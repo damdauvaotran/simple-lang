@@ -1,7 +1,7 @@
 package ast
 
 import (
-	"amonkey/token"
+	"bottle/token"
 	"bytes"
 )
 

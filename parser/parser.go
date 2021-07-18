@@ -1,9 +1,9 @@
 package parser
 
 import (
-	"amonkey/ast"
-	"amonkey/lexer"
-	"amonkey/token"
+	"bottle/ast"
+	"bottle/lexer"
+	"bottle/token"
 	"fmt"
 	"strconv"
 )

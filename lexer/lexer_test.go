@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"amonkey/token"
+	"bottle/token"
 	"testing"
 )
 

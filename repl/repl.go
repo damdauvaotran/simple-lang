@@ -1,8 +1,8 @@
 package repl
 
 import (
-	"amonkey/lexer"
-	"amonkey/token"
+	"bottle/lexer"
+	"bottle/token"
 	"bufio"
 	"fmt"
 	"io"

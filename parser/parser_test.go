@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"amonkey/ast"
-	"amonkey/lexer"
+	"bottle/ast"
+	"bottle/lexer"
 	"fmt"
 	"testing"
 )

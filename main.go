@@ -1,7 +1,7 @@
 package main
 
 import (
-	"amonkey/repl"
+	"bottle/repl"
 	"fmt"
 	"os"
 	"os/user"
