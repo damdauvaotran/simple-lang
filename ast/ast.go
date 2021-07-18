@@ -133,9 +133,9 @@ func (il *IntegerLiteral) String() string {
 }
 
 type PrefixExpression struct { // Extend Expression
-	Token         token.Token // The prefix token, e.g. !
+	Token    token.Token // The prefix token, e.g. !
 	Operator string
-	Right         Expression
+	Right    Expression
 }
 
 func (pe *PrefixExpression) expressionNode() {}
@@ -150,3 +150,51 @@ func (pe *PrefixExpression) String() string {
 	out.WriteString(")")
 	return out.String()
 }
+
+type SuffixExpression struct { // Extend Expression
+	Token    token.Token // The prefix token, e.g. !
+	Operator string
+	Left     Expression
+}
+
+func (se *SuffixExpression) expressionNode() {}
+func (se *SuffixExpression) TokenLiteral() string {
+	return se.Token.Literal
+}
+func (se *SuffixExpression) String() string {
+	var out bytes.Buffer
+	out.WriteString("(")
+	out.WriteString(se.Operator)
+	out.WriteString(se.Left.String())
+	out.WriteString(")")
+	return out.String()
+}
+
+type InfixExpression struct {
+	Token    token.Token // The operator token, e.g. +
+	Left     Expression
+	Operator string
+	Right    Expression
+}
+
+func (oe *InfixExpression) expressionNode()      {}
+func (oe *InfixExpression) TokenLiteral() string { return oe.Token.Literal }
+func (oe *InfixExpression) String() string {
+	var out bytes.Buffer
+	out.WriteString("(")
+	out.WriteString(oe.Left.String())
+	out.WriteString(" " + oe.Operator + " ")
+	out.WriteString(oe.Right.String())
+	out.WriteString(")")
+
+	return out.String()
+}
+
+type Boolean struct {
+	Token token.Token
+	value bool
+}
+
+func (b *Boolean) expressionNode()      {}
+func (b *Boolean) TokenLiteral() string { return b.Token.Literal }
+func (b *Boolean) String() string       { return b.Token.Literal }

@@ -11,20 +11,25 @@ import (
 const (
 	_ int = iota
 	LOWEST
-	EQUALS
-	// ==
+	EQUALS      // ==
 	LESSGREATER // > or <
-	SUM
-	// +
-	PRODUCT
-	// *
-	PREFIX
-	// -X or !X
-	SUFFIX
-	// X++
-	CALL
-	// myFunction(X)
+	SUM         // +
+	PRODUCT     // *
+	PREFIX      // -X or !X
+	SUFFIX      // X++
+	CALL        // myFunction(X)
 )
+
+var precedence = map[token.Token]int{
+	token.EQ:       EQUALS,
+	token.NOT_EQ:   EQUALS,
+	token.LT:       LESSGREATER,
+	token.GT:       LESSGREATER,
+	token.PLUS:     SUM,
+	token.MINUS:    SUM,
+	token.SLASH:    PRODUCT,
+	token.ASTERISK: PRODUCT,
+}
 
 type Parser struct {
 	l         *lexer.Lexer
@@ -131,8 +136,7 @@ func (p *Parser) parseReturnStatement() *ast.ReturnStatement {
 
 func (p *Parser) parsePrefixExpression() ast.Expression {
 	expression := &ast.PrefixExpression{
-		Token:
-		p.curToken,
+		Token:    p.curToken,
 		Operator: p.curToken.Literal,
 	}
 	p.nextToken()
